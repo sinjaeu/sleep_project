@@ -58,6 +58,7 @@ if 'Quality of Sleep' in sq_df.columns:
 # 데이터 통합
 combined_df = pd.concat([se_df, sh_df, ssd_df, sq_df], ignore_index=True)
 
+print(combined_df.info())
 # 중복된 열 제거
 columns_to_drop = ['Sleep duration', 'Sleep Duration', 'Tired', 'Quality of Sleep']
 existing_columns_to_drop = [col for col in columns_to_drop if col in combined_df.columns]
