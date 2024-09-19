@@ -91,11 +91,10 @@ def predict():
                     input_data[column] = float(value)
         
         # Ensure all required features are present
-        missing_features = set(feature_names) - set(input_data.keys())
-        if missing_features:
-            for feature in missing_features:
+        for feature in feature_names:
+            if feature not in input_data:
                 input_data[feature] = 0.0  # or another appropriate default value
-        
+
         sleep_quality_score = predict_sleep_quality(input_data)
         feedback = generate_feedback(input_data)
         
@@ -104,6 +103,8 @@ def predict():
             "feedback": feedback
         })
     except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':

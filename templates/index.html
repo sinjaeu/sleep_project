@@ -7,12 +7,16 @@
     <link rel="stylesheet" href="../static/CSS.css">
 </head>
 <body>
+    <div class="top-bar">
+        <h1>수면 품질 예측기</h1>
+    </div>
+
     <form id="predictForm">
         <label for="PhysicalActivityLevel">신체 활동 정도:</label>
-        <input type="number" id="PhysicalActivityLevel" name="Physical Activity Level" step="0.1" required placeholder="0.0 ~ 100.0"><br><br>
+        <input type="number" id="PhysicalActivityLevel" name="Physical Activity Level" step="0.1" required placeholder="0.0 ~ 100.0">
 
         <label for="StressLevel">스트레스 정도:</label>
-        <input type="number" id="StressLevel" name="Stress Level" step="0.1" required placeholder="0.0 ~ 10.0"><br><br>
+        <input type="number" id="StressLevel" name="Stress Level" step="0.1" required placeholder="0.0 ~ 10.0">
 
         <label for="BMICategory">BMI 범주:</label>
         <select id="BMICategory" name="BMI Category" required>
@@ -20,35 +24,35 @@
             <option value="1">정상</option>
             <option value="2">과체중</option>
             <option value="3">비만 이상</option>
-        </select><br><br>
+        </select>
 
         <label for="HeartRate">심박수:</label>
-        <input type="number" id="HeartRate" name="Heart Rate" step="0.1" required placeholder="40.0 ~ 140.0"><br><br>
+        <input type="number" id="HeartRate" name="Heart Rate" step="0.1" required placeholder="40.0 ~ 140.0">
 
         <label for="SleepDisorder">수면 장애:</label>
         <select id="SleepDisorder" name="Sleep Disorder" required>
             <option value="0">없음</option>
             <option value="1">불면증</option>
             <option value="2">수면 무호흡증</option>
-        </select><br><br>
+        </select>
 
         <label for="Enough">수면이 충분한가:</label>
         <select id="Enough" name="Enough" required>
             <option value="1">네</option>
             <option value="0">아니오</option>
-        </select><br><br>
+        </select>
 
         <label for="Hours">수면 시간:</label>
-        <input type="number" id="Hours" name="Hours" step="0.1" required placeholder="0.0 ~ 24.0"><br><br>
+        <input type="number" id="Hours" name="Hours" step="0.1" required placeholder="0.0 ~ 24.0">
 
         <label for="Breakfast">아침 식사 유무:</label>
         <select id="Breakfast" name="Breakfast" required>
             <option value="1">네</option>
             <option value="0">아니오</option>
-        </select><br><br>
+        </select>
 
         <label for="CaffeineIntake">카페인 섭취량:</label>
-        <input type="number" id="CaffeineIntake" name="Caffeine_Intake_mg" step="0.1" required placeholder="0.0 ~ 500.0"><br><br>
+        <input type="number" id="CaffeineIntake" name="Caffeine_Intake_mg" step="0.1" required placeholder="0.0 ~ 500.0">
 
         <input type="button" value="Predict Sleep Quality" onclick="submitForm()">
     </form>
