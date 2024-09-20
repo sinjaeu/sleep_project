@@ -71,7 +71,7 @@ y = combined_df['Sleep_Quality_Score']
 # 'Sleep_Quality_Score'와의 상관관계만 추출
 corr_with_sleep_quality = combined_df.corr()['Sleep_Quality_Score'].sort_values(ascending=False)
 
-# 상관계수 절대값 기준 설정 (예: 0.1 이하인 열 제외)
+# 상관계수 절대값 기준 설정
 corr_threshold = 0.1
 
 # 상관계수 절대값이 기준 이하인 열 필터링
@@ -104,6 +104,7 @@ print(f"R-squared (Filtered Features): {r2_filtered}")
 print(f"Training Score: {model_filtered.score(X_train_filtered, y_train)}")
 print(f"Testing Score: {model_filtered.score(X_test_filtered, y_test)}")
 
+# 모델 저장
 feature_names = X_filtered.columns.tolist()
 joblib.dump(model_filtered, 'model/model_filtered.pkl')
 joblib.dump(scaler_filtered, 'model/scaler_filtered.pkl')

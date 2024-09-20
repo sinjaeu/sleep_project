@@ -9,12 +9,12 @@ app = Flask(__name__)
 
 task_status = {}
 
-# Load the saved model, scaler, and feature names
+# 모델 불러오기
 model_filtered = joblib.load('model/model_filtered.pkl')
 scaler_filtered = joblib.load('model/scaler_filtered.pkl')
 feature_names = joblib.load('model/feature_names.pkl')
 
-# Mapping and feedback functions
+# 메핑
 mappings = {
     'Gender': {'Male': 0, 'Female': 1},
     'BMI Category': {"Normal": 0, "Normal Weight": 1, "Overweight": 2, "Obese": 3},
@@ -34,25 +34,22 @@ ranges = {
     'Caffeine_Intake_mg': {'min': 0, 'max': 500}
 }
 
-# Prediction and feedback functions
+# 예측, 피드백 함수
 def predict_sleep_quality(input_data):
-    # Create a DataFrame with the required features
     input_df = pd.DataFrame([input_data], columns=feature_names)
     
-    # Ensure missing features are filled with default values
     for feature in feature_names:
         if feature not in input_df.columns:
-            input_df[feature] = 0.0  # or another appropriate default value
+            input_df[feature] = 0.0
     
-    # Reorder columns to match feature_names
     input_df = input_df[feature_names]
     
-    # Scale the input data
+    # 입력 데이터 스케일링
     input_scaled = scaler_filtered.transform(input_df)
     
-    # Predict the score
+    # 점수 예측
     predicted_score = model_filtered.predict(input_scaled)
-    return max(predicted_score[0], 1.0)
+    return max(predicted_score[0], 1.0)  # 기본 점수 세팅
 
 def generate_feedback(input_data, sleep_quality):
     feedback = []
@@ -80,7 +77,6 @@ def generate_feedback(input_data, sleep_quality):
         feedback.append("현재 상태는 적절합니다.")
     return feedback
 
-# Routes
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -97,10 +93,9 @@ def predict():
                 else:
                     input_data[column] = float(value)
         
-        # Ensure all required features are present
         for feature in feature_names:
             if feature not in input_data:
-                input_data[feature] = 0.0  # or another appropriate default value
+                input_data[feature] = 0.0
 
         sleep_quality_score = round(predict_sleep_quality(input_data), 2)
         feedback = generate_feedback(input_data, sleep_quality_score)
@@ -110,7 +105,7 @@ def predict():
             "feedback": feedback
         })
     except Exception as e:
-        # Log the exception for debugging purposes
+        # 오류 로깅
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
