@@ -5,10 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predict Sleep Quality</title>
     <link rel="stylesheet" href="../static/CSS.css">
+    <script>
+        // 페이지가 로드될 때 로컬 스토리지에서 점수를 가져오는 함수
+        window.onload = function() {
+            const sleepScore = localStorage.getItem('sleepScore');
+            if (sleepScore) {
+                document.getElementById('sleepScore').textContent = `당신의 수면 점수: ${sleepScore}`;
+            }
+        };
+
+        async function submitForm() {
+            const formData = new FormData(document.getElementById('predictForm'));
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('modalScore').innerText = result.sleep_quality_score.toFixed(2);
+                document.getElementById('modalFeedback').innerText = result.feedback.join("\n");
+
+                // 로컬 스토리지에 수면 점수 저장
+                localStorage.setItem('sleepScore', result.sleep_quality_score);
+                document.getElementById('sleepScore').textContent = `당신의 수면 점수: ${result.sleep_quality_score}`;
+
+                // 모달 표시
+                document.getElementById('modal').style.display = 'block';
+            } else {
+                console.error('Error:', await response.text());
+            }
+        };
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        };
+    </script>
 </head>
 <body>
     <div class="top-bar">
-        <h1>수면 품질 예측기</h1>
+        <div class="sleep-score" id="sleepScore">당신의 수면 점수: 0</div>
+        <h1 onclick="window.location.href = '/'">수면 품질 예측기</h1>
+        <p onclick="window.location.href = '/sleep_health'">수면에 대하여</p>
     </div>
 
     <form id="predictForm">
@@ -54,7 +92,7 @@
         <label for="CaffeineIntake">카페인 섭취량:</label>
         <input type="number" id="CaffeineIntake" name="Caffeine_Intake_mg" step="0.1" required placeholder="0.0 ~ 500.0">
 
-        <input type="button" value="Predict Sleep Quality" onclick="submitForm()">
+        <input type="button" value="수면 점수 예측하기" onclick="submitForm()">
     </form>
 
     <div id="modal" class="modal">
@@ -64,32 +102,8 @@
             <p>점수: <span id="modalScore"></span></p>
             <h3>피드백</h3>
             <pre id="modalFeedback"></pre>
+            <img id="correlationGraph" src="{{ url_for('static', filename='corr.png') }}" alt="Correlation Graph" style="width: 100%; max-width: 600px;">
         </div>
     </div>
-
-    <script>
-        async function submitForm() {
-            const formData = new FormData(document.getElementById('predictForm'));
-            const response = await fetch('/predict', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                document.getElementById('modalScore').innerText = result.sleep_quality_score.toFixed(2);
-                document.getElementById('modalFeedback').innerText = result.feedback.join("\n");
-
-                // Show modal
-                document.getElementById('modal').style.display = 'block';
-            } else {
-                console.error('Error:', await response.text());
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-    </script>
 </body>
 </html>

@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # 데이터 로드
 se_df = pd.read_csv('sleep_ef.csv')
@@ -91,6 +93,29 @@ X_test_filtered = scaler_filtered.transform(X_test)
 # 필터링된 피처로 모델 학습
 model_filtered = RandomForestRegressor(n_estimators=100, max_depth=30, min_samples_split=2, random_state=42)
 model_filtered.fit(X_train_filtered, y_train)
+
+# X_filtered의 열 이름을 사용하여 새로운 DataFrame 생성
+X_filtered_with_target = pd.DataFrame(X_filtered, columns=X_filtered.columns)
+X_filtered_with_target['Sleep_Quality_Score'] = combined_df['Sleep_Quality_Score']
+
+# 상관계수 계산
+correlation_matrix_filtered = X_filtered_with_target.corr()
+
+# 특정 열(예: 'Sleep_Quality_Score')과의 상관계수를 선택
+sleep_quality_correlation_filtered = correlation_matrix_filtered['Sleep_Quality_Score'].drop('Sleep_Quality_Score')
+
+# 막대 그래프 생성
+plt.figure(figsize=(10, 6))
+sleep_quality_correlation_filtered.sort_values(ascending=False).plot(kind='bar', color='skyblue')
+plt.title('Correlation with Sleep Quality Score (Filtered Features)')
+plt.xlabel('Features')
+plt.ylabel('Correlation Coefficient')
+plt.xticks(rotation=45)
+plt.grid(axis='y')
+
+# 그래프 표시
+plt.tight_layout()
+plt.show()
 
 # 예측
 y_pred_filtered = model_filtered.predict(X_test_filtered)

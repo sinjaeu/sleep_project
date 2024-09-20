@@ -6,10 +6,10 @@ from sklearn.metrics import mean_squared_error, r2_score
 import joblib
 
 # 데이터 로드
-se_df = pd.read_csv('sleep_ef.csv')
-sh_df = pd.read_csv('sleep_healthy.csv')
-ssd_df = pd.read_csv('SleepStudyData.csv')
-sq_df = pd.read_csv('sleep_quality.csv')
+se_df = pd.read_csv('data/sleep_ef.csv')
+sh_df = pd.read_csv('data/sleep_healthy.csv')
+ssd_df = pd.read_csv('data/SleepStudyData.csv')
+sq_df = pd.read_csv('data/sleep_quality.csv')
 
 # 결측치 처리
 se_df = se_df.fillna(0)
@@ -105,6 +105,6 @@ print(f"Training Score: {model_filtered.score(X_train_filtered, y_train)}")
 print(f"Testing Score: {model_filtered.score(X_test_filtered, y_test)}")
 
 feature_names = X_filtered.columns.tolist()
-joblib.dump(model_filtered, 'model_filtered.pkl')
-joblib.dump(scaler_filtered, 'scaler_filtered.pkl')
-joblib.dump(feature_names, 'feature_names.pkl')
+joblib.dump(model_filtered, 'model/model_filtered.pkl')
+joblib.dump(scaler_filtered, 'model/scaler_filtered.pkl')
+joblib.dump(feature_names, 'model/feature_names.pkl')

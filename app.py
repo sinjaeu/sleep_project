@@ -1,13 +1,18 @@
 from flask import Flask, request, render_template, jsonify
+import threading
+import time
+import uuid
 import pandas as pd
 import joblib
 
 app = Flask(__name__)
 
+task_status = {}
+
 # Load the saved model, scaler, and feature names
-model_filtered = joblib.load('model_filtered.pkl')
-scaler_filtered = joblib.load('scaler_filtered.pkl')
-feature_names = joblib.load('feature_names.pkl')
+model_filtered = joblib.load('model/model_filtered.pkl')
+scaler_filtered = joblib.load('model/scaler_filtered.pkl')
+feature_names = joblib.load('model/feature_names.pkl')
 
 # Mapping and feedback functions
 mappings = {
@@ -49,7 +54,7 @@ def predict_sleep_quality(input_data):
     predicted_score = model_filtered.predict(input_scaled)
     return max(predicted_score[0], 1.0)
 
-def generate_feedback(input_data):
+def generate_feedback(input_data, sleep_quality):
     feedback = []
     if input_data['Caffeine_Intake_mg'] >= 100:
         feedback.append("카페인 섭취가 높습니다. 카페인 섭취를 줄이세요.")
@@ -69,6 +74,8 @@ def generate_feedback(input_data):
         feedback.append("수면 시간이 너무 적습니다.")
     if input_data['Hours'] >= 12:
         feedback.append("수면 시간이 너무 많습니다.")
+    if sleep_quality < 5:
+        feedback.append("수면 점수가 너무 낮습니다.")
     if not feedback:
         feedback.append("현재 상태는 적절합니다.")
     return feedback
@@ -95,8 +102,8 @@ def predict():
             if feature not in input_data:
                 input_data[feature] = 0.0  # or another appropriate default value
 
-        sleep_quality_score = predict_sleep_quality(input_data)
-        feedback = generate_feedback(input_data)
+        sleep_quality_score = round(predict_sleep_quality(input_data), 2)
+        feedback = generate_feedback(input_data, sleep_quality_score)
         
         return jsonify({
             "sleep_quality_score": sleep_quality_score,
@@ -106,6 +113,11 @@ def predict():
         # Log the exception for debugging purposes
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 400
+
+
+@app.route('/sleep_health')
+def sleep_health():
+    return render_template('sleep_health.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
